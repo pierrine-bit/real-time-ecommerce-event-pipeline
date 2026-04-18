@@ -1,0 +1,11 @@
+# PostgreSQL Connection Details
+
+Host: localhost
+Port: 5432
+Database: events_db
+User: postgres
+Password: securepassword
+
+Note:
+These credentials are intended for local development and testing purposes only.
+For production environments, sensitive information should be managed using secure methods such as environment variables or a configuration management system.

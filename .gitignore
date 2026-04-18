@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+
+# Spark / Streaming (IMPORTANT)
+checkpoint/
+stream_data/
+tmp/
+
+# OS files
+.DS_Store
+
+# Ignore uv lock file
+uv.lock
