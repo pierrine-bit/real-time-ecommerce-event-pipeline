@@ -19,8 +19,8 @@ The objective is to assess latency, throughput, and system stability under conti
 * Input Source: CSV files (`stream_data/`)
 * Processing Model: Micro-batch streaming
 * Events per File: ~1000
-* Files per Batch: 3
-* Approximate Input Rate: ~3000 events/second
+* Files per Batch: 1
+* Approximate Input Rate: ~300-400 events/second
 
 ---
 
@@ -35,8 +35,7 @@ Time elapsed between event generation and insertion into PostgreSQL.
 
 **Measurement Method:**
 
-* Compared `event_timestamp` with system insertion time
-* Observed via Spark UI (Streaming tab) and driver logs
+Latency was approximated using Spark micro-batch processing time observed in the Spark UI and driver logs.
 
 **Observed Result:**
 
@@ -59,7 +58,7 @@ Number of events processed per second.
 **Measurement:**
 
 ```text
-Input rate: ~3000 events/sec  
+Input rate: ~300-400 events/sec  
 Observed throughput: matched input rate with no backlog
 ```
 
@@ -128,12 +127,12 @@ Memory Usage: ~400–600 MB
 * Resource usage remained stable throughout execution
 * No memory spikes or executor failures observed
 * Indicates available capacity for scaling
-
+Measurements were taken in a local WSL environment and may vary depending on hardware configuration.
 ---
 
 ### 3.6 Metric Relationship Analysis
 
-* Throughput (~3000 events/sec) matches input rate
+* Throughput (~300-400 events/sec) matches input rate
 * Batch duration (150–400 ms) is lower than ingestion interval
 * Processing keeps up with data arrival
 
@@ -151,8 +150,7 @@ Memory Usage: ~400–600 MB
 
 1. **JDBC Writes (PostgreSQL)**
 
-   * Database writes are slower than in-memory processing
-   * Potential bottleneck at higher scale
+JDBC writes introduce higher latency compared to in-memory Spark operations and may become a bottleneck as data volume increases.
 
 2. **Single-node Execution**
 
@@ -160,7 +158,7 @@ Memory Usage: ~400–600 MB
 
 3. **File-based Streaming Source**
 
-   * Less efficient compared to real streaming platforms 
+Less efficient compared to distributed streaming platforms such as Kafka.
 
 ---
 
@@ -190,7 +188,7 @@ To scale this system further:
 The pipeline demonstrates:
 
 * Low latency (~1 second)
-* High throughput (~3000 events/sec)
+* High throughput (~300-400 events/sec)
 * Stable performance under continuous load
 
 The system efficiently processes streaming data in a local environment and reflects production-level design principles. With additional infrastructure, it can scale to handle larger, real-world workloads.
