@@ -16,7 +16,7 @@ The goal is to verify correctness, reliability, fault tolerance, and performance
 ## 2. Test Environment
 
 * OS: Ubuntu (WSL)
-* Python: 3.14
+* Python: 3.12.x
 * Spark: 3.5.x (local mode)
 * PostgreSQL: 14+
 * Input Source: CSV files (`stream_data/`)
