@@ -160,7 +160,7 @@ Memory Usage: ~400–600 MB
 
 3. **File-based Streaming Source**
 
-   * Less efficient compared to real streaming platforms (e.g., Kafka)
+   * Less efficient compared to real streaming platforms 
 
 ---
 
