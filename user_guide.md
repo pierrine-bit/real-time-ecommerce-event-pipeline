@@ -186,7 +186,6 @@ in both terminals.
 
 * Spark uses micro-batch processing
 * CSV simulates streaming ingestion
-* In production, Kafka would replace CSV input
 
 ---
 
