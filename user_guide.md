@@ -16,7 +16,7 @@ The pipeline consists of:
 
 Ensure the following are installed:
 
-* Python 3.14
+* Python 3.12.x
 * Apache Spark 3.5+
 * Java 21+
 * PostgreSQL 14+
