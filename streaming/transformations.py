@@ -6,7 +6,7 @@ from pyspark.sql.functions import (
 
 
 def clean_events(df):
-    """Validate, enrich, and deduplicate events."""
+    """Validate, enrich, watermark, and deduplicate events."""
 
     return (
 
@@ -23,29 +23,17 @@ def clean_events(df):
         )
 
         .withColumn(
-
             "event_timestamp",
-
-            to_timestamp(
-                col("event_timestamp")
-            )
-
+            to_timestamp(col("event_timestamp"))
         )
 
         .withColumn(
-
             "event_hour",
-
-            hour(
-                col("event_timestamp")
-            )
-
+            hour(col("event_timestamp"))
         )
 
         .withColumn(
-
             "revenue",
-
             col("quantity")
             *
             col("price")
@@ -54,12 +42,10 @@ def clean_events(df):
                 1 -
                 col("discount")
             )
-
         )
 
         .filter(
-            col("event_type")
-            .isin(
+            col("event_type").isin(
                 "view",
                 "purchase"
             )
@@ -74,8 +60,16 @@ def clean_events(df):
         )
 
         .filter(
-            col("event_id")
-            .isNotNull()
+            col("event_id").isNotNull()
+        )
+
+        .filter(
+            col("event_timestamp").isNotNull()
+        )
+
+        .withWatermark(
+            "event_timestamp",
+            "10 minutes"
         )
 
         .dropDuplicates(

@@ -7,7 +7,10 @@ from config.settings import (
     STREAM_INPUT_PATH,
     CHECKPOINT_PATH,
     DB_URL,
-    DB_PROPERTIES
+    DB_PROPERTIES,
+    POSTGRES_TABLE,
+    TRIGGER_INTERVAL,
+    ARCHIVE_DIR
 )
 
 from schemas.event_schema import event_schema
@@ -40,9 +43,7 @@ def run_pipeline():
 
         spark = create_spark_session()
 
-        spark.sparkContext.setLogLevel(
-            "WARN"
-        )
+        spark.sparkContext.setLogLevel("WARN")
 
         raw_df = read_event_stream(
             spark,
@@ -50,9 +51,7 @@ def run_pipeline():
             STREAM_INPUT_PATH
         )
 
-        clean_df = clean_events(
-            raw_df
-        )
+        clean_df = clean_events(raw_df)
 
         query = (
 
@@ -60,52 +59,43 @@ def run_pipeline():
             .writeStream
 
             .foreachBatch(
-
-                lambda df, batch_id:
-
-                write_to_postgres(
-
+                lambda df, batch_id: write_to_postgres(
                     df,
-
                     batch_id,
-
                     DB_URL,
-
                     DB_PROPERTIES,
-
-                    "fact_events"
-
+                    POSTGRES_TABLE,
+                    STREAM_INPUT_PATH,
+                    ARCHIVE_DIR
                 )
-
             )
 
-            .outputMode(
-                "append"
+            .outputMode("append")
+
+            .trigger(
+                processingTime=TRIGGER_INTERVAL
             )
 
             .option(
-
                 "checkpointLocation",
-
                 CHECKPOINT_PATH
-
             )
 
             .start()
 
         )
 
-        logging.info(
-            "Pipeline started"
-        )
+        logging.info("Pipeline started")
 
         query.awaitTermination()
 
+    except KeyboardInterrupt:
+
+        logging.info("Pipeline stopped gracefully")
+
     except Exception as error:
 
-        logging.error(
-            f"Pipeline failed: {error}"
-        )
+        logging.error(f"Pipeline failed: {error}")
 
         raise
 

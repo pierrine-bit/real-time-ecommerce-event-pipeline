@@ -1,3 +1,6 @@
+import os
+import glob
+import shutil
 import logging
 
 
@@ -6,12 +9,13 @@ def write_to_postgres(
     batch_id,
     db_url,
     db_properties,
-    table_name
+    table_name,
+    input_dir=None,
+    archive_dir=None
 ):
-    """Persist micro-batch to PostgreSQL."""
+    """Persist micro-batch to PostgreSQL then archive processed CSV files."""
 
     if batch_df.isEmpty():
-
         return
 
     try:
@@ -47,3 +51,26 @@ def write_to_postgres(
         )
 
         raise
+
+    if input_dir and archive_dir:
+        _archive_processed_files(input_dir, archive_dir, batch_id)
+
+
+def _archive_processed_files(input_dir, archive_dir, batch_id):
+    """Move processed CSV files from input_dir to archive_dir."""
+
+    os.makedirs(archive_dir, exist_ok=True)
+
+    csv_files = glob.glob(os.path.join(input_dir, "*.csv"))
+
+    for src in csv_files:
+
+        filename = os.path.basename(src)
+        dst = os.path.join(archive_dir, filename)
+
+        try:
+            shutil.move(src, dst)
+            logging.info(f"Archived {filename}")
+
+        except Exception as error:
+            logging.warning(f"Could not archive {filename}: {error}")

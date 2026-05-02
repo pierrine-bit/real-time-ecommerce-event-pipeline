@@ -1,10 +1,9 @@
+
 # Real-Time E-Commerce Analytics
 
 ## Overview
 
-This project delivers a real-time analytics pipeline for e-commerce event data using Apache Spark Structured Streaming and PostgreSQL.
-
-The solution captures customer activities such as product views and purchases, processes incoming events in near real time, applies data quality controls and business transformations, and persists analytics-ready records for downstream reporting.
+This project delivers a real-time analytics pipeline for e-commerce event data using Apache Spark Structured Streaming and PostgreSQL. The solution captures customer activities such as product views and purchases, processes incoming events in near real time, applies data quality controls and business transformations, and persists analytics-ready records for downstream reporting.
 
 The architecture focuses on operational reliability, data integrity, fault recovery, and performance under continuous streaming workloads.
 
@@ -70,7 +69,7 @@ The processed dataset supports analytical workloads including:
 
 ## Solution Architecture
 
-```text
+```text id="sk0tx9"
 Data Generator
       ↓
 CSV Event Files
@@ -90,23 +89,26 @@ System architecture diagram:
 
 ## Project Structure
 
-```text
+```text id="84ylsy"
 real_time_ecommerce_analytics/
 ├── config/
-├── schemas/
-├── streaming/
-├── sql/
 ├── docs/
+│   ├── project_overview.md
+│   ├── user_guide.md
+│   ├── test_cases.md
+│   ├── performance_metrics.md
 │   └── system_architecture.png
-├── stream_data/
-├── checkpoint/
+├── schemas/
+├── sql/
+│   ├── postgres_setup.sql
+│   └── business_queries.sql
+├── streaming/
+├── .gitignore
+├── README.md
 ├── data_generator.py
-├── main.py
-├── spark_streaming_to_postgres.py
 ├── postgres_connection_details.txt
-├── .env
 ├── requirements.txt
-└── README.md
+└── spark_streaming_to_postgres.py
 ```
 
 ## Data Model

@@ -1,0 +1,18 @@
+# Python environment
+.venv/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Spark runtime artifacts
+checkpoint/
+stream_data/
+
+# Logs
+*.log
+
+# IDE settings
+.vscode/
+.idea/

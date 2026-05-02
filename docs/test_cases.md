@@ -1,123 +1,126 @@
-# Test Cases – Real-Time Data Pipeline
 
-## Purpose
+# Test Cases — Real-Time E-Commerce Analytics Pipeline
 
-This document defines the validation scenarios used to verify correctness, reliability, fault recovery, and operational stability.
+## 1. Purpose
 
+This document records the validation performed to verify the correctness, reliability, and stability of the real-time e-commerce analytics pipeline.
 
-## Test Environment
+Validation covered:
 
-| Parameter | Value |
-|-----------|--------|
-| Operating System | Ubuntu (WSL) |
-| Python Version | 3.12.x |
-| Spark Version | 3.5.x |
-| Execution Mode | Local Mode |
-| Database | PostgreSQL 14+ |
-| Input Source | CSV files (`stream_data/`) |
+* event generation
+* stream ingestion
+* transformation
+* PostgreSQL loading
+* duplicate prevention
+* checkpoint recovery
+* runtime stability
 
+# 2. Test Environment
 
-## Validation Scenarios
+| Component        |            Specification |
+| ---------------- | -----------------------: |
+| Operating System |               Ubuntu WSL |
+| Python           |                     3.12 |
+| Apache Spark     |                    4.1.1 |
+| Java             |                       21 |
+| Database         |            PostgreSQL 16 |
+| Input Source     |                CSV files |
+| Output Sink      | PostgreSQL `fact_events` |
 
-### Test Case 1: Streaming Data Generation
+# 3. Test Cases
 
-**Objective**
+## Test Case 1 — Event Generation
 
-Verify continuous generation of event files.
-
-**Validation**
+### Validation
 
 ```bash
-head stream_data/events_0.csv
+python data_generator.py
 ```
 
-**Expected Result**
+### Result
 
-- Files are generated continuously
-- Each file contains approximately 1000 records
-- Generated files follow the expected schema
+CSV files were generated continuously in `stream_data/`.
 
-**Observed Result**
-
-Passed.
-
-
-### Test Case 2: Stream Ingestion Detection
-
-**Objective**
-
-Verify automatic ingestion of new files.
-
-**Validation Indicator**
+Example:
 
 ```text
-Batch X loaded
+Generated stream_data/events_0.csv
+Generated stream_data/events_1.csv
+Generated stream_data/events_2.csv
 ```
 
-**Expected Result**
-
-- Micro-batches start automatically
-- No ingestion failures occur
-
-**Observed Result**
-
-Passed.
+**Status:** PASS
 
 
-### Test Case 3: Data Transformation Accuracy
+## Test Case 2 — Stream Ingestion
 
-**Objective**
+### Validation
 
-Verify transformations.
+```bash
+spark-submit \
+--packages org.postgresql:postgresql:42.7.3 \
+spark_streaming_to_postgres.py
+```
 
-**Validation Query**
+### Result
+
+Spark started successfully and processed files continuously.
+
+Example:
+
+```text
+Pipeline started
+Batch 32 loaded
+Batch 33 loaded
+Batch 34 loaded
+```
+
+**Status:** PASS
+
+## Test Case 3 — PostgreSQL Table Validation
+
+### Validation
 
 ```sql
-SELECT event_type, event_hour, event_timestamp
-FROM fact_events
-LIMIT 10;
+\dt
 ```
 
-**Expected Result**
+### Result
 
-- Correct timestamps
-- Correct event hours
-- Valid event types
+```text
+fact_events
+user_events
+```
 
-**Observed Result**
+Both tables were available.
 
-Passed.
+**Status:** PASS
 
+## Test Case 4 — Data Load Validation
 
-### Test Case 4: Data Persistence
-
-**Objective**
-
-Verify data storage.
-
-**Validation Query**
+### Validation
 
 ```sql
-SELECT COUNT(*)
-FROM fact_events;
+SELECT COUNT(*) FROM fact_events;
 ```
 
-**Expected Result**
+### Result
 
-Record count increases continuously.
+Record count increased during execution.
 
-**Observed Result**
+Example:
 
-Passed.
+```text
+42,000
+54,000
+78,000+
+```
 
+**Status:** PASS
 
-### Test Case 5: Deduplication
+## Test Case 5 — Duplicate Validation
 
-**Objective**
-
-Verify duplicate prevention.
-
-**Validation Query**
+### Validation
 
 ```sql
 SELECT event_id, COUNT(*)
@@ -126,76 +129,148 @@ GROUP BY event_id
 HAVING COUNT(*) > 1;
 ```
 
-**Expected Result**
+### Result
 
-No duplicate records.
-
-**Observed Result**
-
-Passed.
-
-
-### Test Case 6: Fault Recovery
-
-**Objective**
-
-Verify checkpoint recovery.
-
-**Expected Result**
-
-Previously processed data is not reprocessed.
-
-**Observed Result**
-
-Passed.
-
-
-### Test Case 7: Performance Stability
-
-**Objective**
-
-Verify stable execution.
-
-**Expected Result**
-
-- Stable batch execution
-- No memory failures
-- No backlog
-
-**Observed Result**
-
-Passed.
-
-
-### Test Case 8: Data Validation
-
-**Objective**
-
-Verify invalid records are filtered.
-
-**Validation Queries**
-
-```sql
-SELECT *
-FROM fact_events
-WHERE event_type NOT IN ('view','purchase');
+```text
+0 rows
 ```
 
+No duplicate records detected.
+
+**Status:** PASS
+
+## Test Case 6 — Event Type Validation
+
+### Validation
+
 ```sql
-SELECT *
+SELECT COUNT(*)
+FROM fact_events
+WHERE event_type NOT IN ('view', 'purchase');
+```
+
+### Result
+
+```text
+0
+```
+
+**Status:** PASS
+
+---
+
+## Test Case 7 — Price Validation
+
+### Validation
+
+```sql
+SELECT COUNT(*)
 FROM fact_events
 WHERE price <= 0;
 ```
 
-**Expected Result**
+### Result
 
-No invalid records.
+```text
+0
+```
 
-**Observed Result**
+**Status:** PASS
 
-Passed.
+## Test Case 8 — Quantity Validation
 
+### Validation
 
-## Conclusion
+```sql
+SELECT COUNT(*)
+FROM fact_events
+WHERE quantity <= 0;
+```
 
-All validation scenarios completed successfully.
+### Result
+
+```text
+0
+```
+
+**Status:** PASS
+
+## Test Case 9 — Null Event ID Validation
+
+### Validation
+
+```sql
+SELECT COUNT(*)
+FROM fact_events
+WHERE event_id IS NULL;
+```
+
+### Result
+
+```text
+0
+```
+
+**Status:** PASS
+
+## Test Case 10 — Checkpoint Recovery
+
+### Validation
+
+After restarting Spark with the existing checkpoint directory:
+
+```sql
+SELECT event_id, COUNT(*)
+FROM fact_events
+GROUP BY event_id
+HAVING COUNT(*) > 1;
+```
+
+### Result
+
+```text
+0 rows
+```
+
+Previously processed files were not reloaded.
+
+**Status:** PASS
+
+## Test Case 11 — Runtime Stability
+
+### Result
+
+Pipeline remained stable during continuous execution.
+
+Observed logs:
+
+```text
+Batch 45 loaded
+Batch 46 loaded
+Batch 47 loaded
+Batch 48 loaded
+```
+
+No failures occurred during processing.
+
+**Status:** PASS
+
+# 4. Validation Summary
+
+| Validation Area       | Status |
+| --------------------- | -----: |
+| Event generation      |   PASS |
+| Stream ingestion      |   PASS |
+| PostgreSQL loading    |   PASS |
+| Duplicate prevention  |   PASS |
+| Event type validation |   PASS |
+| Price validation      |   PASS |
+| Quantity validation   |   PASS |
+| Null validation       |   PASS |
+| Checkpoint recovery   |   PASS |
+| Runtime stability     |   PASS |
+
+# 5. Conclusion
+
+The pipeline was successfully validated end-to-end.
+
