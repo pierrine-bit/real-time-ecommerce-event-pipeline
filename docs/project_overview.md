@@ -30,19 +30,23 @@ The project focuses on:
 ```text
 real_time_ecommerce_analytics/
 ├── config/
-├── schemas/
-├── streaming/
-├── sql/
 ├── docs/
-├── stream_data/
-├── checkpoint/
+│   ├── project_overview.md
+│   ├── user_guide.md
+│   ├── test_cases.md
+│   ├── performance_metrics.md
+│   └── system_architecture.png
+├── schemas/
+├── sql/
+│   ├── postgres_setup.sql
+│   └── business_queries.sql
+├── streaming/
+├── .gitignore
+├── README.md
 ├── data_generator.py
-├── main.py
-├── spark_streaming_to_postgres.py
 ├── postgres_connection_details.txt
-├── .env
 ├── requirements.txt
-└── README.md
+└── spark_streaming_to_postgres.py
 ```
 
 ## Pipeline Description
