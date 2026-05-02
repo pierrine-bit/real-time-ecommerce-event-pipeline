@@ -1,0 +1,10 @@
+PostgreSQL Connection Details
+
+Host: localhost
+Port: 5432
+Database: events_db
+User: postgres
+Password: securepassword
+
+Note:
+For security, the actual project uses environment variables stored in .env.

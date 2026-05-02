@@ -1,0 +1,11 @@
+v1
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_43.csv","timestamp":1777727133293,"batchId":0}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_44.csv","timestamp":1777727136317,"batchId":1}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_45.csv","timestamp":1777727139365,"batchId":2}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_46.csv","timestamp":1777727142393,"batchId":3}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_0.csv","timestamp":1777727146833,"batchId":4}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_1.csv","timestamp":1777727149889,"batchId":5}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_2.csv","timestamp":1777727152917,"batchId":6}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_3.csv","timestamp":1777727155953,"batchId":7}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_4.csv","timestamp":1777727158989,"batchId":8}
+{"path":"file:///home/pierrine/real_time_ecommerce_analytics/stream_data/events_5.csv","timestamp":1777727162029,"batchId":9}
