@@ -106,7 +106,6 @@ real_time_ecommerce_analytics/
 ├── .gitignore
 ├── README.md
 ├── data_generator.py
-├── postgres_connection_details.txt
 ├── requirements.txt
 └── spark_streaming_to_postgres.py
 ```
